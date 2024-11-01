@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Sumbit</title>
+</head>
+
+<body>
+    <h1>Add new Data</h1>
+    <div>
+        <form action="/submit" method="post">
+            <label for="text">Text</label><br>
+            <input type="text" required id="text" name="text"><br>
+            <label for="datetime">Time</label><br>
+            <input type="date" required name="datetime" id="datetime"><br>
+            <label for="color">Color</label><br>
+            <input type="color" required name="color" id="color"><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+
+</html>

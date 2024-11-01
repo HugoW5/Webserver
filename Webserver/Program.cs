@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
+using System.Web;
+using Newtonsoft.Json;
+using Webserver.Handlers;
+
+namespace Webserver
+{
+	internal class Program
+	{
+		public static Dictionary<string, string> pageData = new Dictionary<string, string>() {
+							{"%data%", $"{DateTime.Now.ToString()}"},
+			{"%tableData%", ""}
+						};
+		static async Task Main(string[] args)
+		{
+			//string url = "http://localhost:8080/"; // local ip
+			string url = "http://*/"; // Bind all ips over http
+
+			using (HttpListener listener = new HttpListener())
+			{
+				listener.Prefixes.Add(url);
+				listener.Start();
+				Console.WriteLine("Listening on " + url);
+
+				while (listener.IsListening)
+				{
+					try
+					{
+						HttpListenerContext context = await listener.GetContextAsync();
+						var req = context.Request;
+						var res = context.Response;
+						Queue<string> path = new Queue<string>(req.RawUrl.Split('/'));
+
+						path.Dequeue(); // remove blankspace [0]
+										//Path root
+						string p = path.Dequeue();
+						switch (p)
+						{
+							case "":
+								Handler.RenderDynamicHtml("static/templates/index.html", pageData, req, res);
+								break;
+							case "submit":
+								Handler.RenderHtml("static/templates/create.html", req, res);
+								break;
+							case "post":
+								PostHandler.HandlePost(path, req, res);
+								break;
+							case "static":
+								Handler.HandleStatic(path, req, res);
+								break;
+							default:
+								Handler.Write404(req, res);
+								break;
+						}
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine(ex.ToString());
+					}
+				}
+			}
+		}
+	}
+}
