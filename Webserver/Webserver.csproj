@@ -9,23 +9,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="static\js\**" />
+    <EmbeddedResource Remove="static\js\**" />
+    <None Remove="static\js\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="static\css\" />
-    <Folder Include="static\js\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="static\css\style.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="static\templates\create.html">
+    <None Update="static\templates\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="static\templates\index.html">
+    <None Update="static\templates\signup.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

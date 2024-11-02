@@ -45,19 +45,6 @@ namespace Webserver.Handlers
 					Write404(req, res);
 				}
 			}
-			else if (req.HttpMethod == "POST")
-			{
-				var inputData = PostHandler.ParseQueries(req.InputStream);
-				Program.pageData["%tableData%"] += $@"
-            <tr>
-                <td>{inputData["text"]}</td>
-                <td>{inputData["datetime"]}</td>
-                <td>{inputData["color"]}</td>
-            </tr>
-	";
-				res.Redirect("/");
-				res.Close();
-			}
 		}
 
 		/// <summary>
@@ -107,6 +94,37 @@ namespace Webserver.Handlers
 			res.StatusCode = 404; // not found
 			res.OutputStream.Write(buffer, 0, buffer.Length);
 			res.Close();
+		}
+
+		public static void CreateNewAccount(HttpListenerRequest req, HttpListenerResponse res)
+		{
+			if (req.HttpMethod == "POST")
+			{
+				var inputData = PostHandler.ParseQueries(req.InputStream);
+				Guid sessionId = Guid.NewGuid();
+				Program.accounts.Add(new Account(
+					inputData["username"],
+					inputData["password"],
+					sessionId
+					));
+				res.SetCookie(new Cookie
+				{
+					Name = "sessionId",
+					Expires = DateTime.Now.AddDays(14),
+					Value = $"{sessionId.ToString()}"
+				});
+				//add accounts to table
+				Program.pageData["%tableData%"] += $@"
+            <tr>
+                <td>{req.RemoteEndPoint.Address.ToString()}</td>
+                <td>{inputData["username"]}</td>
+                <td>{inputData["password"]}</td>
+                <td>{sessionId.ToString()}</td>
+            </tr>
+	";
+				res.Redirect("/");
+				res.Close();
+			}
 		}
 	}
 }
